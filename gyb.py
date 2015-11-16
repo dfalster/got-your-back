@@ -392,7 +392,7 @@ def buildGAPIObject(api):
   except googleapiclient.errors.UnknownApiNameOrVersion:
     disc_file = getProgPath()+'%s-%s.json' % (api, version)
     if os.path.isfile(disc_file):
-      f = file(disc_file, 'r')
+      f = file(disc_file, 'rb')
       discovery = f.read()
       f.close()
       return googleapiclient.discovery.build_from_document(discovery,
@@ -411,7 +411,7 @@ def buildGAPIServiceObject(api, soft_errors=False):
   oauth2servicefile = getProgPath()+'oauth2service'
   oauth2servicefilejson = '%s.json' % oauth2servicefile
   try:
-    json_string = open(oauth2servicefilejson, 'r').read()
+    json_string = open(oauth2servicefilejson, 'rb').read()
   except IOError as e:
     print('Error: %s' % e)
     print('')
@@ -647,7 +647,7 @@ def getMessageIDs (sqlconn, backup_folder):
                       WHERE rfc822_msgid IS NULL'''):
     message_full_filename = os.path.join(backup_folder, filename)
     if os.path.isfile(message_full_filename):
-      f = open(message_full_filename, 'r')
+      f = open(message_full_filename, 'rb')
       msgid = header_parser.parse(f, True).get('message-id') or '<DummyMsgID>'
       f.close()
       sqlcur.execute(
@@ -1046,6 +1046,8 @@ def main(argv):
       current += 1
       message_filename = x[2]
       message_num = x[0]
+      print('RESTORE:' + message_filename)
+
       if not os.path.isfile(os.path.join(options.local_folder,
         message_filename)):
         print('WARNING! file %s does not exist for message %s'
@@ -1380,7 +1382,7 @@ def main(argv):
       drive = buildGAPIServiceObject('drive')
     quota_results = callGAPI(service=drive.about(), function='get',
       fields='quotaBytesTotal,quotaBytesUsedInTrash,quotaBytesUsedAggregate,qu\
-otaBytesByService,quotaType')
+      otaBytesByService,quotaType')
     for key in quota_results:
       if key == 'quotaBytesByService':
         print('Service Usage:')
@@ -1486,7 +1488,7 @@ otaBytesByService,quotaType')
     print('\n')
 
 if __name__ == '__main__':
-  doGYBCheckForUpdates()
+#  doGYBCheckForUpdates()
   try:
     main(sys.argv[1:])
   except KeyboardInterrupt:
