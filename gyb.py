@@ -1077,7 +1077,7 @@ def main(argv):
         rewrite_line('restoring single large message (%s/%s)' %
           (current, restore_count))
         media_body = googleapiclient.http.MediaInMemoryUpload(full_message,
-          mimetype='message/rfc822')
+          mimetype='message/rfc822',chunksize=1024*1024,resumable=True)
         response = callGAPI(service=restore_serv, function=restore_func,
           userId='me', media_body=media_body, body=body,
           deleted=options.vault, **restore_params)
