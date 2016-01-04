@@ -818,13 +818,14 @@ def backup_message(request_id, response, exception):
     else:
       labelIds = list()
     labels = labelIdsToLabels(labelIds)
-    message_file_name = "%s.eml" % (response['id'])
     message_time = int(response['internalDate'])/1000
     message_date = time.gmtime(message_time)
     time_for_sqlite = datetime.datetime.fromtimestamp(message_time)
-    message_rel_path = os.path.join(str(message_date.tm_year),
-                                    str(message_date.tm_mon),
-                                    str(message_date.tm_mday))
+    message_prefix = str.join(".", (str(message_date.tm_year),
+                                      str(message_date.tm_mon),
+                                      str(message_date.tm_mday)))
+    message_file_name = "%s-%s.eml" % (message_prefix, response['id'])
+    message_rel_path = os.path.join(".")
     message_rel_filename = os.path.join(message_rel_path,
                                         message_file_name)
     message_full_path = os.path.join(options.local_folder,
@@ -1046,7 +1047,7 @@ def main(argv):
       current += 1
       message_filename = x[2]
       message_num = x[0]
-      print('RESTORE:' + message_filename)
+      print('\nRESTORING:' + message_filename)
 
       if not os.path.isfile(os.path.join(options.local_folder,
         message_filename)):
